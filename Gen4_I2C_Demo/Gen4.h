@@ -80,21 +80,6 @@ void Gen4_dataReadyISR(void);
 uint8_t Gen4_readExtendedMemory(uint32_t, uint8_t *, uint16_t);
 void Gen4_writeExtendedMemory(uint32_t, uint8_t *, uint8_t);
 
-// Secondary Gen4 Functions (these just demonstrate usage of the above functions)
-//void Gen4_persistExtendedMemory(void);
-//uint8_t Gen4_getRegisterContents(uint32_t);
-//uint8_t Gen4_getChipID(void);
-//uint8_t Gen4_getFirmwareVersion(void);
-//uint8_t Gen4_getFirmwareSubversion(void);
-//void Gen4_setToAbsoluteMode(void);
-//void Gen4_setToRelativeMode(void);
-//void Gen4_enableFeed(void);
-//void Gen4_disableFeed(void);
-//void Gen4_setZIdleCount(uint8_t);
-//void Gen4_disableLowPowerModes(void);
-//void Gen4_enableStage1Sleep(void);
-//void Gen4_enableStage2Sleep(void);
-
 #ifdef __cplusplus
 }
 #endif
