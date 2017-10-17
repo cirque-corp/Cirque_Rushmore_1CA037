@@ -8,7 +8,6 @@
 //  DR = Pin 20
 
 #define DR_PIN    20
-#define DBUG_PIN  21
 
 uint8_t gen4Buffer[53];
 uint32_t zIdleCount = 0;
@@ -19,9 +18,6 @@ void setup()
   Serial.begin(115200);
   delay(750);
   Serial.println("Running Gen4 I2C Demo...");
-
-  digitalWriteFast(DBUG_PIN, LOW);
-  pinMode(DBUG_PIN, OUTPUT);
   
   Gen4_init();
   
@@ -34,9 +30,6 @@ void setup()
   Serial.println(Demo_getFirmwareVersion(), HEX);
   Serial.print("FW Sub-Version:\t0x");
   Serial.println(Demo_getFirmwareSubversion(), HEX);
-
-//  Gen4_setToAbsoluteMode();
-//  Gen4_setToRelativeMode();
 }
 
 void loop()
