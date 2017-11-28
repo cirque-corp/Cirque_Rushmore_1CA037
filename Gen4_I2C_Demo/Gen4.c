@@ -29,7 +29,7 @@ void Gen4_readPacket(uint8_t * data)
   uint8_t i = 0;
   _dataReady = false;
   
-  I2C_request((uint16_t)SLAVE_ADDR, (uint16_t)53, (uint16_t)true);  // Read first 3 bytes to get to report ID
+  I2C_request((uint16_t)SLAVE_ADDR, (uint16_t)53, (uint16_t)true);
 
   while(I2C_available())
   {
