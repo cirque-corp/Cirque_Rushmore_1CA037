@@ -29,7 +29,7 @@ void setup()
   Serial.print("FW Version:\t0x");
   Serial.println(Demo_getFirmwareVersion(), HEX);
   Serial.print("FW Sub-Version:\t0x");
-  Serial.println(Demo_getFirmwareSubversion(), HEX);
+  Serial.println(Demo_getFirmwareSubversion(), HEX); 
 }
 
 void loop()
@@ -44,6 +44,10 @@ void loop()
     char rxChar = Serial.read();
     switch(rxChar)
     {
+      case 'c':
+        Demo_forceComp();
+        Serial.println("Module Compensated...");
+        break;
       case 'e':
         Demo_enableFeed();
         Serial.println("Feed enabled...");
@@ -179,6 +183,14 @@ void Demo_enableStage2Sleep()
   Gen4_writeExtendedMemory(0xC2CE, &powerControl, 1);
 }
 
+void Demo_forceComp()
+{
+  uint8_t feedConfig1 = Demo_getRegisterContents(0xC2C4);
+  feedConfig1 |= 0x80;
+  Gen4_writeExtendedMemory(0xC2C4, &feedConfig1, 1);
+}
+
+
 // Functions for formatting/displaying data in serial terminal
 void printPacket(uint8_t * data)
 {
@@ -287,4 +299,3 @@ void printAbsoluteData(uint8_t * data)
 
   Serial.println();
 }
-
