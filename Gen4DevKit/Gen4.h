@@ -1,6 +1,8 @@
 #ifndef GEN4_H
 #define GEN4_H
 
+// Copyright (c) 2018 Cirque Corp. Restrictions apply. See: www.cirque.com/sw-license
+
 #ifdef __cplusplus
 extern "C" {
 #endif
