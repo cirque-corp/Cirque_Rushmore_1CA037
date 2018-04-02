@@ -1,3 +1,5 @@
+// Copyright (c) 2018 Cirque Corp. Restrictions apply. See: www.cirque.com/sw-license
+
 #include "Gen4.h"
 #include "INA219.h"
 
