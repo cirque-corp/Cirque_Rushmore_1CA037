@@ -1,6 +1,8 @@
-// I2C public API - users will need to implement these functions for their MCU:
 #ifndef I2C_H
 #define I2C_H
+
+// Copyright (c) 2018 Cirque Corp. Restrictions apply. See: www.cirque.com/sw-license
+// I2C public API - users will need to implement these functions for their MCU:
 
 #ifdef __cplusplus
 extern "C" {
