@@ -1,7 +1,6 @@
 // Copyright (c) 2018 Cirque Corp. Restrictions apply. See: www.cirque.com/sw-license
 
 #include <stdint.h>
-#include <stdbool.h>
 #include "INA219.h"
 #include "I2C.h"
 
