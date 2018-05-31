@@ -1,13 +1,13 @@
+// Copyright (c) 2018 Cirque Corp. Restrictions apply. See: www.cirque.com/sw-license
+
 #include <stdint.h>
-#include <stdbool.h>
 #include <Wire.h>
 #include "I2C.h"
 
-
 void I2C_init(uint32_t clockFrequency)
 {
-  Wire.setClock(clockFrequency);
   Wire.begin();
+  Wire.setClock(clockFrequency);  // call .setClock after .begin
 }
 
 void I2C_request(uint16_t address, uint16_t count, uint16_t stop)
@@ -37,7 +37,5 @@ void I2C_beginTransmission(uint8_t address)
 
 void I2C_endTransmission(bool stop)
 {
-//  Serial.print("endTransmission() returned:\t");
-//  Serial.println(Wire.endTransmission(stop), HEX);
   Wire.endTransmission(stop);
 }
