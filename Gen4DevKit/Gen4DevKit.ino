@@ -1,5 +1,9 @@
 // Copyright (c) 2018 Cirque Corp. Restrictions apply. See: www.cirque.com/sw-license
 
+/* This project presents how to read and interpret data from the Gen4 touchpads. 
+   This is presented via Serial Port. You can also change various configuration and 
+   print settings by sending commands via Serial Port. Send 'h' for a full list of commands. */
+
 #include "API_Gen4.h"           /**< Provides API calls to interact with Gen4 firmware */
 #include "Demo_02_000658.h"     /**< Provides Functions to connect to the 02_000568 dev board */
 
@@ -180,7 +184,7 @@ void printHelpTable()
     Serial.println("p\t-\tPersist Settings to Flash");
     Serial.println("s\t-\tPrint System Info");
     Serial.println("t\t-\tEnable Tracking (default)");
-    Serial.println("T\t-\tDiable Tracking");
+    Serial.println("T\t-\tDisable Tracking");
     Serial.println("v\t-\tEnable Compensation (default)");
     Serial.println("V\t-\tDisable Compensation");
     Serial.println("");
@@ -288,7 +292,7 @@ void printCRQ_AbsoluteReport(report_t * report)
         Serial.print("    Palm Flags:\t0b");
         Serial.println(report->abs.fingers[i].palm, BIN);
         Serial.print("    Valid:\t");
-        Serial.println(API_Gen4_isFingerValid(report,i));
+        Serial.println(API_Gen4_isFingerValid(report,i)? "Yes":"No");
         Serial.print("    (x,y):\t(");
         Serial.print(report->abs.fingers[i].x, DEC);
         Serial.print(",");
@@ -533,6 +537,8 @@ void printContactEvents(report_t* cur_report, report_t* prev_report, uint8_t fin
 
 /** Determines and prints if a finger validation event occurred between cur_report and prev_report for finger_num. 
     Demonstrates use of the API_Gen4_isFingerValid function. 
+    Note: x,y data for invalid fingers should generally be ignored. When a finger is released, its last location is 
+    still sent. This should be ignored because the finger is not valid. 
     */
 void printFingerValidationEvents(report_t* cur_report, report_t* prev_report, uint8_t finger_num)
 {
@@ -631,5 +637,3 @@ void initialize_saved_reports()
         prevKeyboardReport_g.keyboard.keycode[i] = 0x0;
     }
 }
-
-
