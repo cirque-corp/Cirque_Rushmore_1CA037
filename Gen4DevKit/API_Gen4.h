@@ -77,7 +77,7 @@ typedef struct
 /** Subcontainer for holding the Cirque Absolute Report data of a single finger*/
 typedef struct 
 {
-    uint8_t  palm;  /** < Bitfield with Palm-reject, confidence and single sample information */
+    uint8_t  palm;  /** < Bitfield with Palm-reject, confidence and single sample information Note: a finger may have old or inaccurate x,y data when the confidence is low*/
     uint16_t x;     /** < Absolute X position of finger */
     uint16_t y;     /**< Absolute Y position of finger */
 } fingerData_t; 
@@ -200,7 +200,9 @@ void API_Gen4_enableTracking(void);
 
 /********** Tools for Determining Input Events ************/
 
-/** determines if the finger_num finger corresponds to a valid finger in the report */
+/** determines if the finger_num finger corresponds to a valid finger in the report 
+    The finger may still have x,y coordinates when the finger is invalid. These 
+    coordinates should be ignored */
 bool API_Gen4_isFingerValid(report_t* report, uint8_t finger_num);
 
 /** determines if the finger_num finger is in contact with the module */
