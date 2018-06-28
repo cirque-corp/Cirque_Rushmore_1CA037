@@ -1,11 +1,12 @@
 // Copyright (c) 2018 Cirque Corp. Restrictions apply. See: www.cirque.com/sw-license
 
-/* This project presents how to read and interpret data from the Gen4 touchpads. 
-   This is presented via Serial Port. You can also change various configuration and 
-   print settings by sending commands via Serial Port. Send 'h' for a full list of commands. */
+// In order to get this to build, you have to run the moveFiles.bat (located in this directory) once before compile time. 
+// This batch file copies the necessary includes from their source directories to this directory to satisfy Arduino's compiler (all files need to be in this directory). 
+// If your local directory structure doesn't match the branch, the relative paths won't evaluate properly.
 
 #include "API_Gen4.h"           /**< Provides API calls to interact with Gen4 firmware */
-#include "Demo_02_000658.h"     /**< Provides Functions to connect to the 02_000568 dev board */
+//#include "Demo_02_000658.h"     /**< Provides Functions to connect to the 02_000568 dev board */
+#include "API_Hardware.h"
 
 #include "API_HostBus.h"        /**< Provides I2C connection to module */
 
@@ -17,9 +18,9 @@ void setup()
     Serial.begin(115200);
     while(!Serial);
 
-    Demo_init(); //Initialize board hardware
+    API_Hardware_init(); //Initialize board hardware
     
-    Demo_power3V3();    //Power up the board
+    API_Hardware_PowerOn();    //Power up the board
     delay(2);           //delay for power up
     
     // initialize i2c connection at 400khz 
@@ -637,3 +638,5 @@ void initialize_saved_reports()
         prevKeyboardReport_g.keyboard.keycode[i] = 0x0;
     }
 }
+
+
