@@ -6,8 +6,13 @@
 void UsbSerial_Init()
 {
   Serial.begin(115200);
-  delay(1000);
-//  while(!Serial);
+  //while(!Serial);
+  delay(500);
+}
+
+void UsbSerial_SendByte(uint8_t data)
+{
+	Serial.write(data);
 }
 
 void UsbSerial_SendShort(uint16_t shortToSend)
@@ -22,4 +27,14 @@ void UsbSerial_SendByteBuffer(uint8_t * pBuffer, uint32_t numBytes)
   {
     Serial.write(pBuffer[i]);
   }
+}
+
+uint8_t UsbSerial_Read()
+{
+	return Serial.read();
+}
+
+uint8_t UsbSerial_Available()
+{
+	return Serial.available();
 }

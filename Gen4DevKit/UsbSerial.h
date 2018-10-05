@@ -8,8 +8,11 @@ extern "C" {
 #endif
 
 void UsbSerial_Init(void);
+void UsbSerial_SendByte(uint8_t);
 void UsbSerial_SendShort(uint16_t);
 void UsbSerial_SendByteBuffer(uint8_t *, uint32_t);
+uint8_t UsbSerial_Read(void);
+uint8_t UsbSerial_Available(void);
 
 #ifdef __cplusplus
 }

@@ -25,8 +25,8 @@
 // LED Pins
 #define LED1_PIN      (20)
 #define LED2_PIN      (21)
-const uint8_t LED_Pins[] = { LED1_PIN, LED2_PIN };
-const uint8_t NumberOfLeds = sizeof(LED_Pins) / sizeof(LED_Pins[0]);
+static const uint8_t LED_Pins[] = { LED1_PIN, LED2_PIN };
+static const uint8_t NumberOfLeds = sizeof(LED_Pins) / sizeof(LED_Pins[0]);
 
 /** Initialize Hardware information */
 void API_Hardware_init(void)
