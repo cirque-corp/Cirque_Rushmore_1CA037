@@ -9,7 +9,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -48,12 +47,12 @@ extern "C" {
 
 typedef struct
 {
-    uint8_t     chipId;                 /**< Identifies the HW platform this firmware is designed for */
-    uint8_t     firmwareVersion;        /**< Identifies the FW version that is running on the system */
-    uint8_t     firmwareSubversion;     /**< Provides granular information about which firmware is running */
     uint16_t    vendorId;               /**< HID VID */ 
     uint16_t    productId;              /**< HID PID */ 
     uint16_t    versionId;              /**< HID version ID */ 
+    uint8_t     chipId;                 /**< Identifies the HW platform this firmware is designed for */
+    uint8_t     firmwareVersion;        /**< Identifies the FW version that is running on the system */
+    uint8_t     firmwareSubversion;     /**< Provides granular information about which firmware is running */
     
 } systemInfo_t;  
 
@@ -70,23 +69,23 @@ typedef struct
 /** Contains the data for a Keyboard report */
 typedef struct 
 {
-    uint8_t modifier;   /**< alt,ctrl, gui keys */
     uint8_t keycode[6]; /**< Keycodes pressed, only the first one is used for now */
+    uint8_t modifier;   /**< alt,ctrl, gui keys */
 } keyboardReport_t;
 
 /** Subcontainer for holding the Cirque Absolute Report data of a single finger*/
 typedef struct 
 {
-    uint8_t  palm;  /** < Bitfield with Palm-reject, confidence and single sample information Note: a finger may have old or inaccurate x,y data when the confidence is low*/
     uint16_t x;     /** < Absolute X position of finger */
     uint16_t y;     /**< Absolute Y position of finger */
+    uint8_t  palm;  /** < Bitfield with Palm-reject, confidence and single sample information Note: a finger may have old or inaccurate x,y data when the confidence is low*/
 } fingerData_t; 
 
 /** Contains the Report data for the Cirque Absolute mode (report id 9) */
 typedef struct 
 {
-    uint8_t         contactFlags;   /**< bitmap of contacted fingers ie. 0x3 means fingers 0 and 1 are down*/
     fingerData_t    fingers[5];     /**< Array of 5 Fingers */
+    uint8_t         contactFlags;   /**< bitmap of contacted fingers ie. 0x3 means fingers 0 and 1 are down*/
     uint8_t         buttons;        /**< Bitmap of the button states */
 } CRQabsoluteReport_t; 
 
@@ -95,13 +94,13 @@ typedef struct
     Use the reportID to know which member of the Union to use.*/
 typedef struct 
 { 
-    uint8_t reportID;   /**< ID of the report. Shows what type of report to use */
     union               /**< This union allows the report to be generic.*/
     {
-        mouseReport_t mouse;        /** < Treat the data as a mouse report */
-        keyboardReport_t keyboard;  /**< Treats the data as a keyboard report */
         CRQabsoluteReport_t abs;    /**< Treats the data as an absolute report */
+        keyboardReport_t keyboard;  /**< Treats the data as a keyboard report */
+        mouseReport_t mouse;        /** < Treat the data as a mouse report */
     };
+    uint8_t reportID;   /**< ID of the report. Shows what type of report to use */
 } report_t; 
 
 /**********************************************************/
@@ -224,4 +223,3 @@ void API_Gen4_decodeReport(uint8_t* packet, report_t* result);
 #endif
 
 #endif //API_Gen4_H
-

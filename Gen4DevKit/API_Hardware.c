@@ -19,14 +19,14 @@
 // Haptic control
 #define HAPTIC_PIN    (6)
 // "Scope Trigger lines"
-#define SCOPE1_PIN (7)
-#define SCOPE2_PIN (8)
+#define SCOPE1_PIN    (7)
+#define SCOPE2_PIN    (8)
 
 // LED Pins
 #define LED1_PIN      (20)
 #define LED2_PIN      (21)
-static const uint8_t LED_Pins[] = { LED1_PIN, LED2_PIN };
-static const uint8_t NumberOfLeds = sizeof(LED_Pins) / sizeof(LED_Pins[0]);
+static const uint8_t LED_Pins[] PROGMEM = { LED1_PIN, LED2_PIN };
+static const uint8_t NumberOfLeds PROGMEM = sizeof(LED_Pins) / sizeof(LED_Pins[0]);
 
 /** Initialize Hardware information */
 void API_Hardware_init(void)

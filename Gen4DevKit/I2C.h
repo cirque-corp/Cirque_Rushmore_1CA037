@@ -17,7 +17,7 @@ the host:
 /** The ability to initialize and configure the I2C system for a given clock frequency */
 void I2C_init(uint32_t clockFrequency);
 /** finish these comments */
-void I2C_request(uint16_t address, uint16_t count, uint16_t stop);
+void I2C_request(int16_t address, int16_t count, int16_t stop);
 uint16_t I2C_available(void);
 uint8_t I2C_read(void);
 void I2C_write(uint8_t data);

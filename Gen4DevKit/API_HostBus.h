@@ -9,11 +9,11 @@
 extern "C" {
 #endif
 
-#define SUCCESS         0x00
-#define BAD_CHECKSUM    0x01
-#define LENGTH_MISMATCH 0x02
-#define CIRQUE_SLAVE_ADDR  0x2A
-#define ALPS_SLAVE_ADDR  0x2C
+#define SUCCESS           0x00
+#define BAD_CHECKSUM      0x01
+#define LENGTH_MISMATCH   0x02
+#define CIRQUE_SLAVE_ADDR 0x2A
+#define ALPS_SLAVE_ADDR   0x2C
 
 /**
 @defgroup host_interface The I2C Host Interface

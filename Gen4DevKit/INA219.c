@@ -11,20 +11,20 @@
 #define REGISTER__CURRENT           0x04
 #define REGISTER__CALIBRATION       0x05
 
-#define CONFIG__RESET       0x8000
-#define CONFIG__BUS_16V     0x0000
-#define CONFIG__BUS_32V     0x2000
+#define CONFIG__RESET               0x8000
+#define CONFIG__BUS_16V             0x0000
+#define CONFIG__BUS_32V             0x2000
 
-#define CONFIG__BUS_ADC_RES_9     0x0000
-#define CONFIG__BUS_ADC_RES_10    0x0080
-#define CONFIG__BUS_ADC_RES_11    0x0100
-#define CONFIG__BUS_ADC_RES_12    0x0180
-#define CONFIG__BUS_ADC_AVERAGING 0x0400
+#define CONFIG__BUS_ADC_RES_9       0x0000
+#define CONFIG__BUS_ADC_RES_10      0x0080
+#define CONFIG__BUS_ADC_RES_11      0x0100
+#define CONFIG__BUS_ADC_RES_12      0x0180
+#define CONFIG__BUS_ADC_AVERAGING   0x0400
 
-#define CONFIG__SHUNT_ADC_RES_9   0x0000
-#define CONFIG__SHUNT_ADC_RES_10  0x0008
-#define CONFIG__SHUNT_ADC_RES_11  0x0010
-#define CONFIG__SHUNT_ADC_RES_12  0x0018
+#define CONFIG__SHUNT_ADC_RES_9     0x0000
+#define CONFIG__SHUNT_ADC_RES_10    0x0008
+#define CONFIG__SHUNT_ADC_RES_11    0x0010
+#define CONFIG__SHUNT_ADC_RES_12    0x0018
 #define CONFIG__SHUNT_ADC_AVERAGING 0x0040
 
 static uint8_t _slaveAddress = 0x40;
@@ -144,11 +144,11 @@ int32_t INA219_measureShuntVoltage(uint16_t averagingMask)
   
   if (delay > 0)
   {
-	delayMicroseconds(delay);
+	  delayMicroseconds(delay);
   }
   else
   {
-	while(!INA219_dataReady());
+	  while(!INA219_dataReady());
   }
   temp = (int16_t)ReadRegister(REGISTER__SHUNT_VOLTAGE);
   temp *= 10;
@@ -162,11 +162,11 @@ int32_t INA219_measureBusVoltage(uint16_t averagingMask, uint32_t delay)
   INA219_triggerBusMeasurement(averagingMask);
   if (delay > 0)
   {
-	delayMicroseconds(delay);
+	  delayMicroseconds(delay);
   }
   else
   {
-	while(!INA219_dataReady());
+	  while(!INA219_dataReady());
   }
   return (int32_t)((ReadRegister(REGISTER__BUS_VOLTAGE) >> 3) * 4);
 }
