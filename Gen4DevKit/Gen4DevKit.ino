@@ -4,37 +4,35 @@
 // This batch file copies the necessary includes from their source directories to this directory to satisfy Arduino's compiler (all files need to be in this directory). 
 // If your local directory structure doesn't match the branch, the relative paths won't evaluate properly.
 
-#include "API_Gen4.h"           /**< Provides API calls to interact with Gen4 firmware */
+#include "API_Gen4.h"            /**< Provides API calls to interact with Gen4 firmware */
 //#include "Demo_02_000658.h"     /**< Provides Functions to connect to the 02_000568 dev board */
 #include "API_Hardware.h"
-
 #include "API_HostBus.h"        /**< Provides I2C connection to module */
 
-bool dataPrint_mode_g = true; /** < toggle for printing out data > */
-bool eventPrint_mode_g = true; /** < toggle for printing off events */
+bool dataPrint_mode_g = true;   /** < toggle for printing out data > */
+bool eventPrint_mode_g = true;  /** < toggle for printing off events */
 
 void setup()
 {
-    Serial.begin(115200);
-    while(!Serial);
-
-    API_Hardware_init(); //Initialize board hardware
-    
-    API_Hardware_PowerOn();    //Power up the board
-    delay(2);           //delay for power up
-    
-    // initialize i2c connection at 400khz 
-    API_Gen4_init(400000, CIRQUE_SLAVE_ADDR); 
-    
-    delay(50); //delay before reading registers after startup
-    
-    // Collect information about the system and print to Serial
-    systemInfo_t sysInfo;
-    API_Gen4_readSystemInfo(&sysInfo);
-    printSystemInfo(&sysInfo);
-    
-    initialize_saved_reports();     //initialize state for determining touch events
+  Serial.begin(115200);
+  while(!Serial);
   
+  API_Hardware_init();       //Initialize board hardware
+  
+  API_Hardware_PowerOn();    //Power up the board
+  delay(2);                  //delay for power up
+  
+  // initialize i2c connection at 400khz 
+  API_Gen4_init(400000, CIRQUE_SLAVE_ADDR); 
+  
+  delay(50);                 //delay before reading registers after startup
+  
+  // Collect information about the system and print to Serial
+  systemInfo_t sysInfo;
+  API_Gen4_readSystemInfo(&sysInfo);
+  printSystemInfo(&sysInfo);
+
+  initialize_saved_reports(); //initialize state for determining touch events
 }
 
 /** The main structure of the loop is: 
@@ -57,7 +55,6 @@ void loop()
         {
             printDataReport(&report);
         }
-
     }
     
     /* Handle incoming messages from user on serial */
@@ -67,40 +64,39 @@ void loop()
         switch(rxChar)
         {
             case 'c':
-                Serial.println("Compensation Forced");
+                Serial.println(F("Compensation Forced"));
                 API_Gen4_forceComp();
                 break;
                 
             case 'C':
-                Serial.println("Factory Calibrate... ");
+                Serial.println(F("Factory Calibrate... "));
                 if(API_Gen4_factoryCalibrate())
                 {
-                    Serial.println("Done");
+                    Serial.println(F("Done"));
                 }
                 else
                 {
-                    Serial.println("Failed"); //Hardware timeout (Did the module disconnect?) 
+                    Serial.println(F("Failed")); //Hardware timeout (Did the module disconnect?) 
                 }
-                
                 break;
                 
             case 'f':
-                Serial.println("Feed Enabled");
+                Serial.println(F("Feed Enabled"));
                 API_Gen4_enableFeed();
                 break;
                 
             case 'F':
-                Serial.println("Feed Disabled");
+                Serial.println(F("Feed Disabled"));
                 API_Gen4_disableFeed();
                 break;
                 
             case 'a':
-                Serial.println("Absolute Mode Set");
+                Serial.println(F("Absolute Mode Set"));
                 API_Gen4_setCRQ_AbsoluteMode();
                 break;
                 
             case 'r':
-                Serial.println("Relative Mode Set");
+                Serial.println(F("Relative Mode Set"));
                 API_Gen4_setRelativeMode();
                 break;
                 
@@ -111,48 +107,48 @@ void loop()
                 break;
                 
             case 'p':
-                Serial.println("Settings saved to flash");
+                Serial.println(F("Settings saved to flash"));
                 API_Gen4_persistToFlash();
                 break;
                 
             case 't':
-                Serial.println("Tracking Enabled");
+                Serial.println(F("Tracking Enabled"));
                 API_Gen4_enableTracking();
                 break;
                 
             case 'T':
-                Serial.println("Tracking Disabled");
+                Serial.println(F("Tracking Disabled"));
                 API_Gen4_disableTracking();
                 break;
                 
             case 'v':
-                Serial.println("Compensation Enabled");
+                Serial.println(F("Compensation Enabled"));
                 API_Gen4_enableComp();
                 break;
                 
             case 'V':
-                Serial.println("Compensation Disabled");
+                Serial.println(F("Compensation Disabled"));
                 API_Gen4_disableComp();
                 break;
                 
             //Print modes
             case 'd':
-                Serial.println("Data Printing turned on");
+                Serial.println(F("Data Printing turned on"));
                 dataPrint_mode_g = true;
                 break;
                 
             case 'D':
-                Serial.println("Data Printing turned off");
+                Serial.println(F("Data Printing turned off"));
                 dataPrint_mode_g = false;
                 break;
                 
             case 'e':
-                Serial.println("Event Printing turned on");
+                Serial.println(F("Event Printing turned on"));
                 eventPrint_mode_g = true;
                 break;
                 
             case 'E':
-                Serial.println("Event Printing turned off");
+                Serial.println(F("Event Printing turned off"));
                 eventPrint_mode_g = false;
                 break;
             
@@ -162,10 +158,8 @@ void loop()
             default:
                 printHelpTable();
                 break;
-            
         }
     }
-    
 }
 
 /******** Functions for Printing Data ***********/
@@ -174,27 +168,28 @@ void loop()
     Commands can be sent over serial through Serial Monitor in Arduino IDE*/
 void printHelpTable()
 {
-    Serial.println("Available Commands (case sensitive)");
-    Serial.println("");
-    Serial.println("c\t-\tForce Compensation");
-    Serial.println("C\t-\tFactory Calibrate");
-    Serial.println("f\t-\tEnable Feed (default)");
-    Serial.println("F\t-\tDisable Feed");
-    Serial.println("a\t-\tSet to Absolute Mode");
-    Serial.println("r\t-\tSet to Relative Mode (default)");
-    Serial.println("p\t-\tPersist Settings to Flash");
-    Serial.println("s\t-\tPrint System Info");
-    Serial.println("t\t-\tEnable Tracking (default)");
-    Serial.println("T\t-\tDisable Tracking");
-    Serial.println("v\t-\tEnable Compensation (default)");
-    Serial.println("V\t-\tDisable Compensation");
-    Serial.println("");
-    Serial.println("h, H, ?\t-\tPrint this Table");
-    Serial.println("d\t-\tTurn on Data Printing (default)");
-    Serial.println("D\t-\tTurn off Data Printing ");
-    Serial.println("e\t-\tTurn on Event Printing (default)");
-    Serial.println("E\t-\tTurn off Event Printing ");
-    Serial.println("");
+    Serial.println(F("Available Commands (case sensitive)"));
+    Serial.println(F(""));
+    Serial.println(F("c\t-\tForce Compensation"));
+    Serial.println(F("C\t-\tFactory Calibrate"));
+    Serial.println(F("f\t-\tEnable Feed (default)"));
+    Serial.println(F("F\t-\tDisable Feed"));
+    Serial.println(F("a\t-\tSet to Absolute Mode"));
+    Serial.println(F("r\t-\tSet to Relative Mode (default)"));
+    Serial.println(F("p\t-\tPersist Settings to Flash"));
+    Serial.println(F("s\t-\tPrint System Info"));
+    Serial.println(F("t\t-\tEnable Tracking (default)"));
+    Serial.println(F("T\t-\tDisable Tracking"));
+    
+    Serial.println(F("v\t-\tEnable Compensation (default)"));
+    Serial.println(F("V\t-\tDisable Compensation"));
+    Serial.println(F(""));
+    Serial.println(F("h, H, ?\t-\tPrint this Table"));
+    Serial.println(F("d\t-\tTurn on Data Printing (default)"));
+    Serial.println(F("D\t-\tTurn off Data Printing "));
+    Serial.println(F("e\t-\tTurn on Event Printing (default)"));
+    Serial.println(F("E\t-\tTurn off Event Printing "));
+    Serial.println(F(""));
 
 }
 
@@ -203,18 +198,18 @@ void printHelpTable()
 void printSystemInfo(systemInfo_t* sysInfo)
 {
 
-    Serial.println("System Information");
-    Serial.print("Chip ID:\t");
+    Serial.println(F("System Information"));
+    Serial.print(F("Chip ID:\t"));
     Serial.println(sysInfo->chipId, HEX);
-    Serial.print("FW Version:\t");
+    Serial.print(F("FW Version:\t"));
     Serial.println(sysInfo->firmwareVersion, HEX);
-    Serial.print("FW Subversion:\t");
+    Serial.print(F("FW Subversion:\t"));
     Serial.println(sysInfo->firmwareSubversion, HEX);
-    Serial.print("Vendor ID:\t");
+    Serial.print(F("Vendor ID:\t"));
     Serial.println(sysInfo->vendorId, HEX);
-    Serial.print("Product ID:\t");
+    Serial.print(F("Product ID:\t"));
     Serial.println(sysInfo->productId, HEX);
-    Serial.print("Version ID:\t");
+    Serial.print(F("Version ID:\t"));
     Serial.println(sysInfo->versionId, HEX);
     Serial.println();
   
@@ -236,24 +231,24 @@ void printDataReport(report_t * report)
             printCRQ_AbsoluteReport(report);   
             break;
         default:
-            Serial.println("Error: Unknown Report ID");
+            Serial.println(F("Error: Unknown Report ID"));
     }
 }
 
 /** Prints the information stored in a mouse report to serial */
 void printMouseReport(report_t* report)
 {
-    Serial.print("Report ID:\t0x");
+    Serial.print(F("Report ID:\t0x"));
     Serial.println(report->reportID, HEX);
-    Serial.print("Buttons:\t0b");
+    Serial.print(F("Buttons:\t0b"));
     Serial.println(report->mouse.buttons, BIN);
-    Serial.print("X Delta:\t");
+    Serial.print(F("X Delta:\t"));
     Serial.println(report->mouse.xDelta);
-    Serial.print("Y Delta:\t");
+    Serial.print(F("Y Delta:\t"));
     Serial.println(report->mouse.yDelta);
-    Serial.print("Scroll Delta:\t");
+    Serial.print(F("Scroll Delta:\t"));
     Serial.println(report->mouse.scrollDelta);
-    Serial.print("Pan Delta:\t");
+    Serial.print(F("Pan Delta:\t"));
     Serial.println(report->mouse.panDelta);
     Serial.println();
 }
@@ -261,14 +256,14 @@ void printMouseReport(report_t* report)
 /** Prints the information stored in a keyboard report to serial */
 void printKeyboardReport(report_t* report)
 {
-    Serial.print("Report ID:\t0x");
+    Serial.print(F("Report ID:\t0x"));
     Serial.println(report->reportID, HEX);
-    Serial.print("modifier:\t0x");
+    Serial.print(F("modifier:\t0x"));
     Serial.println(report->keyboard.modifier, HEX);
-    Serial.print("Keycodes:");
+    Serial.print(F("Keycodes:"));
     for(uint8_t i = 0; i < 5; i++)
     {
-        Serial.print("\t0x");
+        Serial.print(F("\t0x"));
         Serial.print(report->keyboard.keycode[i],HEX);
         
     }
@@ -279,30 +274,29 @@ void printKeyboardReport(report_t* report)
 /** Prints the information stored in a CRQ_ABSOLUTE report to serial*/
 void printCRQ_AbsoluteReport(report_t * report)
 {
-    Serial.print("Report ID:\t0x");
+    Serial.print(F("Report ID:\t0x"));
     Serial.println(report->reportID, HEX);
-    Serial.print("Contact Flags:\t0b");
+    Serial.print(F("Contact Flags:\t0b"));
     Serial.println(report->abs.contactFlags, BIN);
-    Serial.print("Buttons:\t0b");
+    Serial.print(F("Buttons:\t0b"));
     Serial.println(report->abs.buttons, BIN);
     for(uint8_t i = 0; i < 5; i++)
     {
-        Serial.print("Finger");
+        Serial.print(F("Finger"));
         Serial.print(i);
-        Serial.println(":");
-        Serial.print("    Palm Flags:\t0b");
+        Serial.println(F(":"));
+        Serial.print(F("    Palm Flags:\t0b"));
         Serial.println(report->abs.fingers[i].palm, BIN);
-        Serial.print("    Valid:\t");
+        Serial.print(F("    Valid:\t"));
         Serial.println(API_Gen4_isFingerValid(report,i)? "Yes":"No");
-        Serial.print("    (x,y):\t(");
+        Serial.print(F("    (x,y):\t("));
         Serial.print(report->abs.fingers[i].x, DEC);
-        Serial.print(",");
+        Serial.print(F(","));
         Serial.print(report->abs.fingers[i].y, DEC);
-        Serial.println(")");
+        Serial.println(F(")"));
         
     }
     Serial.println();
-
 }
 
 /**************************************************/
@@ -336,7 +330,7 @@ void printEvent(report_t* cur_report)
             prevKeyboardReport_g = *cur_report;
             break;
         default:
-            Serial.println("NOT VALID REPORT FOR EVENTS");
+            Serial.println(F("NOT VALID REPORT FOR EVENTS"));
             break;
     }
 }
@@ -348,9 +342,8 @@ void printMouseReportEvents(report_t* cur_report, report_t* prev_report)
 {
     if(prev_report->reportID == MOUSE_REPORT_ID)
     {
-        printButtonEvents( cur_report, prev_report);
+        printButtonEvents(cur_report, prev_report);
     }
-    
 }
 
 /** Prints all Absolute events.
@@ -364,9 +357,8 @@ void printCRQ_AbsoluteEvents(report_t* cur_report, report_t* prev_report)
         {
             printFingerEvents(cur_report, prev_report, i);
         }
-        printButtonEvents( cur_report, prev_report);
+        printButtonEvents(cur_report, prev_report);
     }
-    
 }
 
 /** Prints all keyboard events.
@@ -382,7 +374,6 @@ void printKeyboardEvents(report_t* cur_report, report_t* prev_report)
         {
             printKeycodeEvents(cur_report, prev_report, i);
         }
-
     }
 }
 
@@ -398,35 +389,35 @@ void printModifierKeyEvents(report_t* cur_report, report_t* prev_report)
     
     if(changedModifier & KEYBOARD_MODIFIER_LEFT_CTRL_KEY_MASK)
     {
-        printKeypressEvent("Left Ctrl", curModifier & KEYBOARD_MODIFIER_LEFT_CTRL_KEY_MASK);
+        printKeypressEvent(F("Left Ctrl"), curModifier & KEYBOARD_MODIFIER_LEFT_CTRL_KEY_MASK);
     }
     if(changedModifier & KEYBOARD_MODIFIER_LEFT_SHIFT_KEY_MASK)
     {
-        printKeypressEvent("Left Shift", curModifier & KEYBOARD_MODIFIER_LEFT_SHIFT_KEY_MASK);
+        printKeypressEvent(F("Left Shift"), curModifier & KEYBOARD_MODIFIER_LEFT_SHIFT_KEY_MASK);
     }
     if(changedModifier & KEYBOARD_MODIFIER_LEFT_ALT_KEY_MASK)
     {
-        printKeypressEvent("Left Alt", curModifier & KEYBOARD_MODIFIER_LEFT_ALT_KEY_MASK);
+        printKeypressEvent(F("Left Alt"), curModifier & KEYBOARD_MODIFIER_LEFT_ALT_KEY_MASK);
     }
     if(changedModifier & KEYBOARD_MODIFIER_LEFT_GUI_KEY_MASK)
     {
-        printKeypressEvent("Left GUI", curModifier & KEYBOARD_MODIFIER_LEFT_GUI_KEY_MASK);
+        printKeypressEvent(F("Left GUI"), curModifier & KEYBOARD_MODIFIER_LEFT_GUI_KEY_MASK);
     }
     if(changedModifier & KEYBOARD_MODIFIER_RIGHT_CTRL_KEY_MASK)
     {
-        printKeypressEvent("Right Ctrl", curModifier & KEYBOARD_MODIFIER_RIGHT_CTRL_KEY_MASK);
+        printKeypressEvent(F("Right Ctrl"), curModifier & KEYBOARD_MODIFIER_RIGHT_CTRL_KEY_MASK);
     }
     if(changedModifier & KEYBOARD_MODIFIER_RIGHT_SHIFT_KEY_MASK)
     {
-        printKeypressEvent("Right Shift", curModifier & KEYBOARD_MODIFIER_RIGHT_SHIFT_KEY_MASK);
+        printKeypressEvent(F("Right Shift"), curModifier & KEYBOARD_MODIFIER_RIGHT_SHIFT_KEY_MASK);
     }
     if(changedModifier & KEYBOARD_MODIFIER_RIGHT_ALT_KEY_MASK)
     {
-        printKeypressEvent("Right Alt", curModifier & KEYBOARD_MODIFIER_RIGHT_ALT_KEY_MASK);
+        printKeypressEvent(F("Right Alt"), curModifier & KEYBOARD_MODIFIER_RIGHT_ALT_KEY_MASK);
     }
     if(changedModifier & KEYBOARD_MODIFIER_RIGHT_GUI_KEY_MASK)
     {
-        printKeypressEvent("Right GUI", curModifier & KEYBOARD_MODIFIER_RIGHT_GUI_KEY_MASK);
+        printKeypressEvent(F("Right GUI"), curModifier & KEYBOARD_MODIFIER_RIGHT_GUI_KEY_MASK);
     }
 }
 
@@ -436,11 +427,11 @@ void printKeypressEvent(String keyname_str, bool pressed)
     Serial.print(keyname_str);
     if(pressed)
     {
-        Serial.println(" Key Pressed");
+        Serial.println(F(" Key Pressed"));
     }
     else
     {
-        Serial.println(" Key Released");
+        Serial.println(F(" Key Released"));
     }
 }
 
@@ -451,17 +442,17 @@ String getKeyName(uint8_t keycode)
     switch(keycode)
     {
         case 0x07:
-            return "D";
+            return F("D");
         case 0x2B:
-            return "TAB";
+            return F("TAB");
         case 0x36:
-            return "COMMA (,)";
+            return F("COMMA (,)");
         case 0x37:
-            return "PERIOD (.)";
+            return F("PERIOD (.)");
         case 0x4F:
-            return "Right-Arrow ( -> )";
+            return F("Right-Arrow ( -> )");
         case 0x50:
-            return "Left-Arrow ( <- )";
+            return F("Left-Arrow ( <- )");
         default:
             return "Unknown (0x" + String(keycode, HEX) + ")";
     }
@@ -476,7 +467,6 @@ void printKeycodeEvents(report_t* cur_report, report_t* prev_report, uint8_t key
     if(cur_report->keyboard.keycode[keycodeIndex] != prev_report->keyboard.keycode[keycodeIndex])
     {
         String keyName = "";
-
         bool pressed = cur_report->keyboard.keycode[keycodeIndex] != 0x0;
         if(pressed)
         {
@@ -487,13 +477,11 @@ void printKeycodeEvents(report_t* cur_report, report_t* prev_report, uint8_t key
         {
             //use prev_report keycode
             keyName = getKeyName(prev_report->keyboard.keycode[keycodeIndex]);
-
         }
-        
         printKeypressEvent(keyName, pressed);
-
     }
 }
+
 /** Determines and prints all contact and validation Events for fingers in absolute mode. 
     Typically the module will send preliminary coordinates of "contacted" fingers 
     a couple frames before it is validated and confident. This is intended to 
@@ -502,11 +490,9 @@ void printKeycodeEvents(report_t* cur_report, report_t* prev_report, uint8_t key
 */
 void printFingerEvents(report_t* cur_report, report_t* prev_report, uint8_t finger_num)
 {
-
     printContactEvents(cur_report, prev_report, finger_num);
     printFingerValidationEvents(cur_report, prev_report, finger_num);
 }
-
 /** Determines and prints if a finger contact event occurred between cur_report and prev_report for finger_num. 
     Demonstrates use of the API_Gen4_isFingerContacted function. 
     */
@@ -518,9 +504,9 @@ void printContactEvents(report_t* cur_report, report_t* prev_report, uint8_t fin
         //it wasn't contacted before
         if(!API_Gen4_isFingerContacted(prev_report, finger_num))
         {
-            Serial.print("Finger ");
+            Serial.print(F("Finger "));
             Serial.print(finger_num);
-            Serial.println(" contacted");
+            Serial.println(F(" contacted"));
         }
     }
     //not contacted now
@@ -529,13 +515,12 @@ void printContactEvents(report_t* cur_report, report_t* prev_report, uint8_t fin
         //it was contacted before
         if(API_Gen4_isFingerContacted(prev_report, finger_num))
         {
-            Serial.print("Finger ");
+            Serial.print(F("Finger "));
             Serial.print(finger_num);
-            Serial.println(" released");
+            Serial.println(F(" released"));
         }
     }
 }
-
 /** Determines and prints if a finger validation event occurred between cur_report and prev_report for finger_num. 
     Demonstrates use of the API_Gen4_isFingerValid function. 
     Note: x,y data for invalid fingers should generally be ignored. When a finger is released, its last location is 
@@ -549,9 +534,9 @@ void printFingerValidationEvents(report_t* cur_report, report_t* prev_report, ui
         //it wasn't valid before
         if(!API_Gen4_isFingerValid(prev_report, finger_num))
         {
-            Serial.print("Finger ");
+            Serial.print(F("Finger "));
             Serial.print(finger_num);
-            Serial.println(" valid");
+            Serial.println(F(" valid"));
         }
     }
     // finger is not valid now
@@ -560,9 +545,9 @@ void printFingerValidationEvents(report_t* cur_report, report_t* prev_report, ui
         // it was valid before
         if(API_Gen4_isFingerValid(prev_report, finger_num))
         {
-            Serial.print("Finger ");
+            Serial.print(F("Finger "));
             Serial.print(finger_num);
-            Serial.println(" invalid");
+            Serial.println(F(" invalid"));
         }
     }
 }
@@ -602,15 +587,15 @@ void printButtonEvents(report_t* cur_report, report_t* prev_report)
     {
         if(changed_buttons & mask)
         {
-            Serial.print("Button ");
+            Serial.print(F("Button "));
             Serial.print(i);
             if(API_Gen4_isButtonPressed(cur_report, mask))
             {
-                Serial.println(" Pressed");
+                Serial.println(F(" Pressed"));
             }
             else
             {
-                Serial.println(" Released");
+                Serial.println(F(" Released"));
             }
         }
         
@@ -638,5 +623,3 @@ void initialize_saved_reports()
         prevKeyboardReport_g.keyboard.keycode[i] = 0x0;
     }
 }
-
-

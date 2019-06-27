@@ -6,7 +6,6 @@
 #include "HostDR.h"
 #include "API_HostBus.h"
 
-
 uint8_t deviceAddress;
 
 void HB_init(int I2CFrequency, uint8_t I2CAddress)
@@ -119,5 +118,3 @@ uint8_t HB_readExtendedMemory(uint32_t registerAddress, uint8_t * data, uint16_t
 
   return result;
 }
-
-

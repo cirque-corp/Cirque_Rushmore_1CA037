@@ -9,8 +9,8 @@ extern "C" {
 #include <Arduino.h>
 
 // Congig Register Masks
-#define CONFIG__FS_RANGE_16V  0x0000
-#define CONFIG__FS_RANGE_32V  0x2000
+#define CONFIG__FS_RANGE_16V      0x0000
+#define CONFIG__FS_RANGE_32V      0x2000
 
 #define CONFIG__SHUNT_PGA_DIV1    0x0000
 #define CONFIG__SHUNT_PGA_DIV2    0x0800

@@ -6,7 +6,6 @@
 
 #define NULL 0
 
-
 /*******HELPER FUNCTION DELCARATIONS *******/
 void decodeReport(uint8_t* packet, report_t* result);
 void decodeMouseReport(uint8_t* packet, report_t* result);
@@ -75,18 +74,20 @@ void API_Gen4_readSystemInfo(systemInfo_t* result)
 
 void API_Gen4_forceComp()
 {
-  uint8_t feedConfig1 = API_Gen4_readRegister(0xC2C4);  // read
-  feedConfig1 |= 0x80;                                  // modify
-  API_Gen4_writeRegister(0xC2C4, feedConfig1);          // write
+    uint8_t feedConfig1 = API_Gen4_readRegister(0xC2C4);  // read
+    feedConfig1 |= 0x80;                                  // modify
+    API_Gen4_writeRegister(0xC2C4, feedConfig1);          // write
 }
 
-void API_Gen4_setCRQ_AbsoluteMode(){
+void API_Gen4_setCRQ_AbsoluteMode()
+{
     uint8_t feedConfig1 = API_Gen4_readRegister(0xC2C4);    // read
     feedConfig1 |= 0x02;                                    // modify
     API_Gen4_writeRegister(0xC2C4, feedConfig1);            // write
 }
 
-void API_Gen4_setRelativeMode(){
+void API_Gen4_setRelativeMode()
+{
     uint8_t feedConfig1 = API_Gen4_readRegister(0xC2C4);    // read
     feedConfig1 &= ~0x02;                                   // modify
     API_Gen4_writeRegister(0xC2C4, feedConfig1);            // write
@@ -319,9 +320,6 @@ void clearReport(report_t* report)
         report->abs.fingers[i].palm = 0;
         report->abs.fingers[i].x = 0;
         report->abs.fingers[i].y = 0;
-        
     }
     report->abs.buttons = 0;
-    
 }
-
