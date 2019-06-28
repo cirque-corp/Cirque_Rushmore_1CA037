@@ -4,10 +4,10 @@
 // This batch file copies the necessary includes from their source directories to this directory to satisfy Arduino's compiler (all files need to be in this directory). 
 // If your local directory structure doesn't match the branch, the relative paths won't evaluate properly.
 
-#include "API_Gen4.h"            /**< Provides API calls to interact with Gen4 firmware */
-//#include "Demo_02_000658.h"     /**< Provides Functions to connect to the 02_000568 dev board */
+#include "API_Gen4.h"            /** < Provides API calls to interact with Gen4 firmware */
+//#include "Demo_02_000658.h"     /** < Provides Functions to connect to the 02_000568 dev board */
 #include "API_Hardware.h"
-#include "API_HostBus.h"        /**< Provides I2C connection to module */
+#include "API_HostBus.h"        /** < Provides I2C connection to module */
 
 bool dataPrint_mode_g = true;   /** < toggle for printing out data > */
 bool eventPrint_mode_g = true;  /** < toggle for printing off events */
@@ -41,125 +41,125 @@ void setup()
     */
 void loop()
 {
-    /* Handle incoming messages from module */
-    if(API_Gen4_DR_Asserted())          // When Data is ready
+  /* Handle incoming messages from module */
+  if(API_Gen4_DR_Asserted())          // When Data is ready
+  {
+    report_t report;
+    API_Gen4_getReport(&report);    // read the report
+    /* Interpret report from module */
+    if(eventPrint_mode_g)
     {
-        report_t report;
-        API_Gen4_getReport(&report);    // read the report
-        /* Interpret report from module */
-        if(eventPrint_mode_g)
-        {
-            printEvent(&report);
-        }
-        if(dataPrint_mode_g)
-        {
-            printDataReport(&report);
-        }
+        printEvent(&report);
     }
-    
-    /* Handle incoming messages from user on serial */
-    if(Serial.available())
+    if(dataPrint_mode_g)
     {
-        char rxChar = Serial.read();
-        switch(rxChar)
-        {
-            case 'c':
-                Serial.println(F("Compensation Forced"));
-                API_Gen4_forceComp();
-                break;
-                
-            case 'C':
-                Serial.println(F("Factory Calibrate... "));
-                if(API_Gen4_factoryCalibrate())
-                {
-                    Serial.println(F("Done"));
-                }
-                else
-                {
-                    Serial.println(F("Failed")); //Hardware timeout (Did the module disconnect?) 
-                }
-                break;
-                
-            case 'f':
-                Serial.println(F("Feed Enabled"));
-                API_Gen4_enableFeed();
-                break;
-                
-            case 'F':
-                Serial.println(F("Feed Disabled"));
-                API_Gen4_disableFeed();
-                break;
-                
-            case 'a':
-                Serial.println(F("Absolute Mode Set"));
-                API_Gen4_setCRQ_AbsoluteMode();
-                break;
-                
-            case 'r':
-                Serial.println(F("Relative Mode Set"));
-                API_Gen4_setRelativeMode();
-                break;
-                
-            case 's':
-                systemInfo_t sysInfo;
-                API_Gen4_readSystemInfo(&sysInfo);
-                printSystemInfo(&sysInfo);
-                break;
-                
-            case 'p':
-                Serial.println(F("Settings saved to flash"));
-                API_Gen4_persistToFlash();
-                break;
-                
-            case 't':
-                Serial.println(F("Tracking Enabled"));
-                API_Gen4_enableTracking();
-                break;
-                
-            case 'T':
-                Serial.println(F("Tracking Disabled"));
-                API_Gen4_disableTracking();
-                break;
-                
-            case 'v':
-                Serial.println(F("Compensation Enabled"));
-                API_Gen4_enableComp();
-                break;
-                
-            case 'V':
-                Serial.println(F("Compensation Disabled"));
-                API_Gen4_disableComp();
-                break;
-                
-            //Print modes
-            case 'd':
-                Serial.println(F("Data Printing turned on"));
-                dataPrint_mode_g = true;
-                break;
-                
-            case 'D':
-                Serial.println(F("Data Printing turned off"));
-                dataPrint_mode_g = false;
-                break;
-                
-            case 'e':
-                Serial.println(F("Event Printing turned on"));
-                eventPrint_mode_g = true;
-                break;
-                
-            case 'E':
-                Serial.println(F("Event Printing turned off"));
-                eventPrint_mode_g = false;
-                break;
-            
-            case '?':
-            case 'h':
-            case 'H':
-            default:
-                printHelpTable();
-                break;
-        }
+        printDataReport(&report);
     }
+  }
+  
+  /* Handle incoming messages from user on serial */
+  if(Serial.available())
+  {
+    char rxChar = Serial.read();
+    switch(rxChar)
+    {
+      case 'c':
+          Serial.println(F("Compensation Forced"));
+          API_Gen4_forceComp();
+          break;
+          
+      case 'C':
+          Serial.println(F("Factory Calibrate... "));
+          if(API_Gen4_factoryCalibrate())
+          {
+              Serial.println(F("Done"));
+          }
+          else
+          {
+              Serial.println(F("Failed")); //Hardware timeout (Did the module disconnect?) 
+          }
+          break;
+          
+      case 'f':
+          Serial.println(F("Feed Enabled"));
+          API_Gen4_enableFeed();
+          break;
+          
+      case 'F':
+          Serial.println(F("Feed Disabled"));
+          API_Gen4_disableFeed();
+          break;
+          
+      case 'a':
+          Serial.println(F("Absolute Mode Set"));
+          API_Gen4_setCRQ_AbsoluteMode();
+          break;
+          
+      case 'r':
+          Serial.println(F("Relative Mode Set"));
+          API_Gen4_setRelativeMode();
+          break;
+          
+      case 's':
+          systemInfo_t sysInfo;
+          API_Gen4_readSystemInfo(&sysInfo);
+          printSystemInfo(&sysInfo);
+          break;
+          
+      case 'p':
+          Serial.println(F("Settings saved to flash"));
+          API_Gen4_persistToFlash();
+          break;
+          
+      case 't':
+          Serial.println(F("Tracking Enabled"));
+          API_Gen4_enableTracking();
+          break;
+          
+      case 'T':
+          Serial.println(F("Tracking Disabled"));
+          API_Gen4_disableTracking();
+          break;
+          
+      case 'v':
+          Serial.println(F("Compensation Enabled"));
+          API_Gen4_enableComp();
+          break;
+          
+      case 'V':
+          Serial.println(F("Compensation Disabled"));
+          API_Gen4_disableComp();
+          break;
+          
+      //Print modes
+      case 'd':
+          Serial.println(F("Data Printing turned on"));
+          dataPrint_mode_g = true;
+          break;
+          
+      case 'D':
+          Serial.println(F("Data Printing turned off"));
+          dataPrint_mode_g = false;
+          break;
+          
+      case 'e':
+          Serial.println(F("Event Printing turned on"));
+          eventPrint_mode_g = true;
+          break;
+          
+      case 'E':
+          Serial.println(F("Event Printing turned off"));
+          eventPrint_mode_g = false;
+          break;
+      
+      case '?':
+      case 'h':
+      case 'H':
+      default:
+          printHelpTable();
+          break;
+    }
+  }
 }
 
 /******** Functions for Printing Data ***********/
@@ -168,135 +168,131 @@ void loop()
     Commands can be sent over serial through Serial Monitor in Arduino IDE*/
 void printHelpTable()
 {
-    Serial.println(F("Available Commands (case sensitive)"));
-    Serial.println(F(""));
-    Serial.println(F("c\t-\tForce Compensation"));
-    Serial.println(F("C\t-\tFactory Calibrate"));
-    Serial.println(F("f\t-\tEnable Feed (default)"));
-    Serial.println(F("F\t-\tDisable Feed"));
-    Serial.println(F("a\t-\tSet to Absolute Mode"));
-    Serial.println(F("r\t-\tSet to Relative Mode (default)"));
-    Serial.println(F("p\t-\tPersist Settings to Flash"));
-    Serial.println(F("s\t-\tPrint System Info"));
-    Serial.println(F("t\t-\tEnable Tracking (default)"));
-    Serial.println(F("T\t-\tDisable Tracking"));
-    
-    Serial.println(F("v\t-\tEnable Compensation (default)"));
-    Serial.println(F("V\t-\tDisable Compensation"));
-    Serial.println(F(""));
-    Serial.println(F("h, H, ?\t-\tPrint this Table"));
-    Serial.println(F("d\t-\tTurn on Data Printing (default)"));
-    Serial.println(F("D\t-\tTurn off Data Printing "));
-    Serial.println(F("e\t-\tTurn on Event Printing (default)"));
-    Serial.println(F("E\t-\tTurn off Event Printing "));
-    Serial.println(F(""));
-
+  Serial.println(F("Available Commands (case sensitive)"));
+  Serial.println(F(""));
+  Serial.println(F("c\t-\tForce Compensation"));
+  Serial.println(F("C\t-\tFactory Calibrate"));
+  Serial.println(F("f\t-\tEnable Feed (default)"));
+  Serial.println(F("F\t-\tDisable Feed"));
+  Serial.println(F("a\t-\tSet to Absolute Mode"));
+  Serial.println(F("r\t-\tSet to Relative Mode (default)"));
+  Serial.println(F("p\t-\tPersist Settings to Flash"));
+  Serial.println(F("s\t-\tPrint System Info"));
+  Serial.println(F("t\t-\tEnable Tracking (default)"));
+  Serial.println(F("T\t-\tDisable Tracking"));
+  
+  Serial.println(F("v\t-\tEnable Compensation (default)"));
+  Serial.println(F("V\t-\tDisable Compensation"));
+  Serial.println(F(""));
+  Serial.println(F("h, H, ?\t-\tPrint this Table"));
+  Serial.println(F("d\t-\tTurn on Data Printing (default)"));
+  Serial.println(F("D\t-\tTurn off Data Printing "));
+  Serial.println(F("e\t-\tTurn on Event Printing (default)"));
+  Serial.println(F("E\t-\tTurn off Event Printing "));
+  Serial.println(F(""));
 }
 
 /** Prints a systemInfo_t struct to Serial.
     See API_Gen4.h for more information about the systemInfo_t struct */
 void printSystemInfo(systemInfo_t* sysInfo)
 {
-
-    Serial.println(F("System Information"));
-    Serial.print(F("Chip ID:\t"));
-    Serial.println(sysInfo->chipId, HEX);
-    Serial.print(F("FW Version:\t"));
-    Serial.println(sysInfo->firmwareVersion, HEX);
-    Serial.print(F("FW Subversion:\t"));
-    Serial.println(sysInfo->firmwareSubversion, HEX);
-    Serial.print(F("Vendor ID:\t"));
-    Serial.println(sysInfo->vendorId, HEX);
-    Serial.print(F("Product ID:\t"));
-    Serial.println(sysInfo->productId, HEX);
-    Serial.print(F("Version ID:\t"));
-    Serial.println(sysInfo->versionId, HEX);
-    Serial.println();
-  
+  Serial.println(F("System Information"));
+  Serial.print(F("Chip ID:\t"));
+  Serial.println(sysInfo->chipId, HEX);
+  Serial.print(F("FW Version:\t"));
+  Serial.println(sysInfo->firmwareVersion, HEX);
+  Serial.print(F("FW Subversion:\t"));
+  Serial.println(sysInfo->firmwareSubversion, HEX);
+  Serial.print(F("Vendor ID:\t"));
+  Serial.println(sysInfo->vendorId, HEX);
+  Serial.print(F("Product ID:\t"));
+  Serial.println(sysInfo->productId, HEX);
+  Serial.print(F("Version ID:\t"));
+  Serial.println(sysInfo->versionId, HEX);
+  Serial.println(F(""));
 }
 
 /** Prints the information stored in a report_t struct to serial */
 void printDataReport(report_t * report)
 {
-    //Use reportID to determine how to decode the report
-    switch(report->reportID)
-    {
-        case MOUSE_REPORT_ID:
-            printMouseReport(report);
-            break;
-        case KEYBOARD_REPORT_ID:
-            printKeyboardReport(report);
-            break;
-        case CRQ_ABSOLUTE_REPORT_ID:
-            printCRQ_AbsoluteReport(report);   
-            break;
-        default:
-            Serial.println(F("Error: Unknown Report ID"));
-    }
+  //Use reportID to determine how to decode the report
+  switch(report->reportID)
+  {
+    case MOUSE_REPORT_ID:
+        printMouseReport(report);
+        break;
+    case KEYBOARD_REPORT_ID:
+        printKeyboardReport(report);
+        break;
+    case CRQ_ABSOLUTE_REPORT_ID:
+        printCRQ_AbsoluteReport(report);   
+        break;
+    default:
+        Serial.println(F("Error: Unknown Report ID"));
+  }
 }
 
 /** Prints the information stored in a mouse report to serial */
 void printMouseReport(report_t* report)
 {
-    Serial.print(F("Report ID:\t0x"));
-    Serial.println(report->reportID, HEX);
-    Serial.print(F("Buttons:\t0b"));
-    Serial.println(report->mouse.buttons, BIN);
-    Serial.print(F("X Delta:\t"));
-    Serial.println(report->mouse.xDelta);
-    Serial.print(F("Y Delta:\t"));
-    Serial.println(report->mouse.yDelta);
-    Serial.print(F("Scroll Delta:\t"));
-    Serial.println(report->mouse.scrollDelta);
-    Serial.print(F("Pan Delta:\t"));
-    Serial.println(report->mouse.panDelta);
-    Serial.println();
+  Serial.print(F("Report ID:\t0x"));
+  Serial.println(report->reportID, HEX);
+  Serial.print(F("Buttons:\t0b"));
+  Serial.println(report->mouse.buttons, BIN);
+  Serial.print(F("X Delta:\t"));
+  Serial.println(report->mouse.xDelta);
+  Serial.print(F("Y Delta:\t"));
+  Serial.println(report->mouse.yDelta);
+  Serial.print(F("Scroll Delta:\t"));
+  Serial.println(report->mouse.scrollDelta);
+  Serial.print(F("Pan Delta:\t"));
+  Serial.println(report->mouse.panDelta);
+  Serial.println(F(""));
 }
 
 /** Prints the information stored in a keyboard report to serial */
 void printKeyboardReport(report_t* report)
 {
-    Serial.print(F("Report ID:\t0x"));
-    Serial.println(report->reportID, HEX);
-    Serial.print(F("modifier:\t0x"));
-    Serial.println(report->keyboard.modifier, HEX);
-    Serial.print(F("Keycodes:"));
-    for(uint8_t i = 0; i < 5; i++)
-    {
-        Serial.print(F("\t0x"));
-        Serial.print(report->keyboard.keycode[i],HEX);
-        
-    }
-    Serial.println();
-    Serial.println();
+  Serial.print(F("Report ID:\t0x"));
+  Serial.println(report->reportID, HEX);
+  Serial.print(F("modifier:\t0x"));
+  Serial.println(report->keyboard.modifier, HEX);
+  Serial.print(F("Keycodes:"));
+  for(uint8_t i = 0; i < 5; i++)
+  {
+      Serial.print(F("\t0x"));
+      Serial.print(report->keyboard.keycode[i],HEX);
+  }
+  Serial.println();
+  Serial.println();
 }
 
 /** Prints the information stored in a CRQ_ABSOLUTE report to serial*/
 void printCRQ_AbsoluteReport(report_t * report)
 {
-    Serial.print(F("Report ID:\t0x"));
-    Serial.println(report->reportID, HEX);
-    Serial.print(F("Contact Flags:\t0b"));
-    Serial.println(report->abs.contactFlags, BIN);
-    Serial.print(F("Buttons:\t0b"));
-    Serial.println(report->abs.buttons, BIN);
-    for(uint8_t i = 0; i < 5; i++)
-    {
-        Serial.print(F("Finger"));
-        Serial.print(i);
-        Serial.println(F(":"));
-        Serial.print(F("    Palm Flags:\t0b"));
-        Serial.println(report->abs.fingers[i].palm, BIN);
-        Serial.print(F("    Valid:\t"));
-        Serial.println(API_Gen4_isFingerValid(report,i)? "Yes":"No");
-        Serial.print(F("    (x,y):\t("));
-        Serial.print(report->abs.fingers[i].x, DEC);
-        Serial.print(F(","));
-        Serial.print(report->abs.fingers[i].y, DEC);
-        Serial.println(F(")"));
-        
-    }
-    Serial.println();
+  Serial.print(F("Report ID:\t0x"));
+  Serial.println(report->reportID, HEX);
+  Serial.print(F("Contact Flags:\t0b"));
+  Serial.println(report->abs.contactFlags, BIN);
+  Serial.print(F("Buttons:\t0b"));
+  Serial.println(report->abs.buttons, BIN);
+  for(uint8_t i = 0; i < 5; i++)
+  {
+    Serial.print(F("Finger"));
+    Serial.print(i);
+    Serial.println(F(":"));
+    Serial.print(F("    Palm Flags:\t0b"));
+    Serial.println(report->abs.fingers[i].palm, BIN);
+    Serial.print(F("    Valid:\t"));
+    Serial.println(API_Gen4_isFingerValid(report,i)? "Yes":"No");
+    Serial.print(F("    (x,y):\t("));
+    Serial.print(report->abs.fingers[i].x, DEC);
+    Serial.print(F(","));
+    Serial.print(report->abs.fingers[i].y, DEC);
+    Serial.println(F(")"));
+  }
+  
+  Serial.println();
 }
 
 /**************************************************/
@@ -315,24 +311,24 @@ report_t prevKeyboardReport_g;  /**< Most recent past Keyboard report */
     Determines which printing function to use from the reportID */
 void printEvent(report_t* cur_report)
 {
-    switch( cur_report->reportID)
-    {
-        case CRQ_ABSOLUTE_REPORT_ID:
-            printCRQ_AbsoluteEvents(cur_report, &prevAbsReport_g);
-            prevAbsReport_g = *cur_report;
-            break;
-        case MOUSE_REPORT_ID:
-            printMouseReportEvents(cur_report, &prevMouseReport_g); 
-            prevMouseReport_g = *cur_report;
-            break;
-        case KEYBOARD_REPORT_ID:
-            printKeyboardEvents(cur_report, &prevKeyboardReport_g);
-            prevKeyboardReport_g = *cur_report;
-            break;
-        default:
-            Serial.println(F("NOT VALID REPORT FOR EVENTS"));
-            break;
-    }
+  switch( cur_report->reportID)
+  {
+    case CRQ_ABSOLUTE_REPORT_ID:
+        printCRQ_AbsoluteEvents(cur_report, &prevAbsReport_g);
+        prevAbsReport_g = *cur_report;
+        break;
+    case MOUSE_REPORT_ID:
+        printMouseReportEvents(cur_report, &prevMouseReport_g); 
+        prevMouseReport_g = *cur_report;
+        break;
+    case KEYBOARD_REPORT_ID:
+        printKeyboardEvents(cur_report, &prevKeyboardReport_g);
+        prevKeyboardReport_g = *cur_report;
+        break;
+    default:
+        Serial.println(F("NOT VALID REPORT FOR EVENTS"));
+        break;
+  }
 }
 
 /** Prints all Mouse events.

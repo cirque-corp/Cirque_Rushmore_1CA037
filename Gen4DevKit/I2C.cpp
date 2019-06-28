@@ -19,13 +19,13 @@
 
 void I2C_init(uint32_t clockFrequency)
 {
-  Wire.begin();
+  Wire.begin();                   // Set the arduino as master.
   Wire.setClock(clockFrequency);  // call .setClock after .begin
 }
 
-void I2C_request(int16_t address, int16_t count, int16_t stop)
+void I2C_request(int16_t address, int16_t count, bool stop)
 {
-  Wire.requestFrom( address, count, stop);
+  Wire.requestFrom(address, count, stop);
 }
 
 uint16_t I2C_available()

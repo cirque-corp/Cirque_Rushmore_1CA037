@@ -8,7 +8,7 @@ extern "C" {
 #endif
 #include <Arduino.h>
 
-// Congig Register Masks
+// Config Register Masks
 #define CONFIG__FS_RANGE_16V      0x0000
 #define CONFIG__FS_RANGE_32V      0x2000
 
@@ -58,7 +58,6 @@ void INA219_init(uint8_t slaveAddress);
 void INA219_config(uint16_t data);
 int32_t INA219_measureShuntVoltage(uint16_t averagingMask);
 int32_t INA219_measureBusVoltage(uint16_t averagingMask, uint32_t delay);
-
 void INA219_powerDown(void);
 
 #ifdef __cplusplus

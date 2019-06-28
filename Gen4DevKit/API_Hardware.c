@@ -5,7 +5,7 @@
 #include "Project_Config.h"
 #include "INA219.h"
 
-/// This code controls the extra hardware functions provided by the 02-000658 Glidepoint Dev Kit board (Blue Soldermask version)
+/// This code controls the extra hardware functions provided by the 02-000658-00 Glidepoint Dev Kit board (Blue Soldermask version)
 
 // Demo board hardware definition
 // Power supply control

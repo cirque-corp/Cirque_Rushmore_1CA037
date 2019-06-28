@@ -5,6 +5,7 @@
 #include "API_Hardware.h"
 
 #define NULL 0
+#define PACKET_SIZE 53 //length of cirque absolute report packet (largest packet size)
 
 /*******HELPER FUNCTION DELCARATIONS *******/
 void decodeReport(uint8_t* packet, report_t* result);
@@ -25,7 +26,6 @@ bool API_Gen4_DR_Asserted(void)
     return (HB_DR_Asserted()); 
 }
 
-#define PACKET_SIZE 53 //length of cirque absolute report packet (largest packet size)
 void API_Gen4_getReport(report_t* result)
 {
     //read packet
@@ -116,7 +116,6 @@ void API_Gen4_disableComp()
 
 bool API_Gen4_factoryCalibrate()
 {
-
     uint8_t previousValue = API_Gen4_readRegister(0xC2C4);          // read
     uint8_t modifiedValue = previousValue | 0x80;                   // modify
     API_Gen4_writeRegister(0xC2C4, modifiedValue);                  // write
@@ -131,7 +130,7 @@ bool API_Gen4_factoryCalibrate()
     }
     API_Gen4_writeRegister(0xC2DF, 0x03);                   // write
     
-    timeout = 0;
+    timeout = 0;  // times out at 5e6 count.  ~150ms- ish
     while(API_Gen4_readRegister(0xC2D4) != 0x00 && (timeout < 5000000)) timeout++;
     if(timeout == 500000)
     {

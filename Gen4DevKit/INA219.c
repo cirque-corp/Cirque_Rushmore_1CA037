@@ -37,7 +37,7 @@ static void WriteRegister(uint8_t reg, uint16_t value)
   I2C_write(reg);
   I2C_write((value >> 8) & 0xFF);
   I2C_write(value & 0xFF);
-  I2C_endTransmission(true);  // TODO: verify stop condition is needed
+  I2C_endTransmission(true);
 }
 
 static uint16_t ReadRegister(uint8_t reg)
@@ -150,7 +150,7 @@ int32_t INA219_measureShuntVoltage(uint16_t averagingMask)
   {
 	  while(!INA219_dataReady());
   }
-  temp = (int16_t)ReadRegister(REGISTER__SHUNT_VOLTAGE);
+  temp = (int16_t) ReadRegister(REGISTER__SHUNT_VOLTAGE);
   temp *= 10;
   return temp;
 }
