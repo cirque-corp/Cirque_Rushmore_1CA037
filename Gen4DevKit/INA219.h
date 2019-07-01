@@ -6,6 +6,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include "I2C.h"
+#include <stdint.h>
 #include <Arduino.h>
 
 // Config Register Masks
@@ -53,12 +56,44 @@ extern "C" {
 #define CONFIG__MODE_BUS_CONT       0x0006
 #define CONFIG__MODE_SHUNT_BUS_CONT 0x0007
 
-void INA219_reset(void);
+#define REGISTER__CONFIG            0x00
+#define REGISTER__SHUNT_VOLTAGE     0x01
+#define REGISTER__BUS_VOLTAGE       0x02
+#define REGISTER__POWER             0x03
+#define REGISTER__CURRENT           0x04
+#define REGISTER__CALIBRATION       0x05
+
+#define CONFIG__RESET               0x8000
+#define CONFIG__BUS_16V             0x0000
+#define CONFIG__BUS_32V             0x2000
+
+#define CONFIG__BUS_ADC_RES_9       0x0000
+#define CONFIG__BUS_ADC_RES_10      0x0080
+#define CONFIG__BUS_ADC_RES_11      0x0100
+#define CONFIG__BUS_ADC_RES_12      0x0180
+#define CONFIG__BUS_ADC_AVERAGING   0x0400
+
+#define CONFIG__SHUNT_ADC_RES_9     0x0000
+#define CONFIG__SHUNT_ADC_RES_10    0x0008
+#define CONFIG__SHUNT_ADC_RES_11    0x0010
+#define CONFIG__SHUNT_ADC_RES_12    0x0018
+#define CONFIG__SHUNT_ADC_AVERAGING 0x0040
+
+/************************************************************/
+/************************************************************/
+/********************  PUBLIC FUNCTIONS *********************/
+
 void INA219_init(uint8_t slaveAddress);
+
 void INA219_config(uint16_t data);
+
+void INA219_reset(void);
+
 int32_t INA219_measureShuntVoltage(uint16_t averagingMask);
+
 int32_t INA219_measureBusVoltage(uint16_t averagingMask, uint32_t delay);
-void INA219_powerDown(void);
+
+//void INA219_powerDown(void); Not defined.
 
 #ifdef __cplusplus
 }

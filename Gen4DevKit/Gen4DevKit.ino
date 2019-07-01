@@ -4,13 +4,13 @@
 // This batch file copies the necessary includes from their source directories to this directory to satisfy Arduino's compiler (all files need to be in this directory). 
 // If your local directory structure doesn't match the branch, the relative paths won't evaluate properly.
 
-#include "API_Gen4.h"            /** < Provides API calls to interact with Gen4 firmware */
-//#include "Demo_02_000658.h"     /** < Provides Functions to connect to the 02_000568 dev board */
+#include "API_C2.h"         /** < Provides API calls to interact with API_C2 firmware */
+//#include "Demo_02_000658.h" /** < Provides Functions to connect to the 02_000568 dev board */
 #include "API_Hardware.h"
-#include "API_HostBus.h"        /** < Provides I2C connection to module */
+#include "API_HostBus.h"    /** < Provides I2C connection to module */
 
-bool dataPrint_mode_g = true;   /** < toggle for printing out data > */
-bool eventPrint_mode_g = true;  /** < toggle for printing off events */
+bool dataPrint_mode_g = true;  /** < toggle for printing out data > */
+bool eventPrint_mode_g = true; /** < toggle for printing off events */
 
 void setup()
 {
@@ -23,13 +23,13 @@ void setup()
   delay(2);                  //delay for power up
   
   // initialize i2c connection at 400khz 
-  API_Gen4_init(400000, CIRQUE_SLAVE_ADDR); 
+  API_C2_init(400000, CIRQUE_SLAVE_ADDR); 
   
   delay(50);                 //delay before reading registers after startup
   
   // Collect information about the system and print to Serial
   systemInfo_t sysInfo;
-  API_Gen4_readSystemInfo(&sysInfo);
+  API_C2_readSystemInfo(&sysInfo);
   printSystemInfo(&sysInfo);
 
   initialize_saved_reports(); //initialize state for determining touch events
@@ -42,10 +42,10 @@ void setup()
 void loop()
 {
   /* Handle incoming messages from module */
-  if(API_Gen4_DR_Asserted())          // When Data is ready
+  if(API_C2_DR_Asserted())          // When Data is ready
   {
     report_t report;
-    API_Gen4_getReport(&report);    // read the report
+    API_C2_getReport(&report);    // read the report
     /* Interpret report from module */
     if(eventPrint_mode_g)
     {
@@ -65,12 +65,12 @@ void loop()
     {
       case 'c':
           Serial.println(F("Compensation Forced"));
-          API_Gen4_forceComp();
+          API_C2_forceComp();
           break;
           
       case 'C':
           Serial.println(F("Factory Calibrate... "));
-          if(API_Gen4_factoryCalibrate())
+          if(API_C2_factoryCalibrate())
           {
               Serial.println(F("Done"));
           }
@@ -82,53 +82,53 @@ void loop()
           
       case 'f':
           Serial.println(F("Feed Enabled"));
-          API_Gen4_enableFeed();
+          API_C2_enableFeed();
           break;
           
       case 'F':
           Serial.println(F("Feed Disabled"));
-          API_Gen4_disableFeed();
+          API_C2_disableFeed();
           break;
           
       case 'a':
           Serial.println(F("Absolute Mode Set"));
-          API_Gen4_setCRQ_AbsoluteMode();
+          API_C2_setCRQ_AbsoluteMode();
           break;
           
       case 'r':
           Serial.println(F("Relative Mode Set"));
-          API_Gen4_setRelativeMode();
+          API_C2_setRelativeMode();
           break;
           
       case 's':
           systemInfo_t sysInfo;
-          API_Gen4_readSystemInfo(&sysInfo);
+          API_C2_readSystemInfo(&sysInfo);
           printSystemInfo(&sysInfo);
           break;
           
       case 'p':
           Serial.println(F("Settings saved to flash"));
-          API_Gen4_persistToFlash();
+          API_C2_persistToFlash();
           break;
           
       case 't':
           Serial.println(F("Tracking Enabled"));
-          API_Gen4_enableTracking();
+          API_C2_enableTracking();
           break;
           
       case 'T':
           Serial.println(F("Tracking Disabled"));
-          API_Gen4_disableTracking();
+          API_C2_disableTracking();
           break;
           
       case 'v':
           Serial.println(F("Compensation Enabled"));
-          API_Gen4_enableComp();
+          API_C2_enableComp();
           break;
           
       case 'V':
           Serial.println(F("Compensation Disabled"));
-          API_Gen4_disableComp();
+          API_C2_disableComp();
           break;
           
       //Print modes
@@ -193,7 +193,7 @@ void printHelpTable()
 }
 
 /** Prints a systemInfo_t struct to Serial.
-    See API_Gen4.h for more information about the systemInfo_t struct */
+    See API_C2.h for more information about the systemInfo_t struct */
 void printSystemInfo(systemInfo_t* sysInfo)
 {
   Serial.println(F("System Information"));
@@ -284,7 +284,7 @@ void printCRQ_AbsoluteReport(report_t * report)
     Serial.print(F("    Palm Flags:\t0b"));
     Serial.println(report->abs.fingers[i].palm, BIN);
     Serial.print(F("    Valid:\t"));
-    Serial.println(API_Gen4_isFingerValid(report,i)? "Yes":"No");
+    Serial.println(API_C2_isFingerValid(report,i)? F("Yes"):F("No"));
     Serial.print(F("    (x,y):\t("));
     Serial.print(report->abs.fingers[i].x, DEC);
     Serial.print(F(","));
@@ -295,9 +295,8 @@ void printCRQ_AbsoluteReport(report_t * report)
   Serial.println();
 }
 
-/**************************************************/
-
-/******** Functions for Printing Events ***********/
+/**************************************************************/
+/*************** FUNCTIONS FOR PRINTING EVENTS ****************/
 
 /** @ingroup prevReports 
     These reports store the state of the most recent reports by type.
@@ -456,8 +455,7 @@ String getKeyName(uint8_t keycode)
 
 /** Determines and prints any keycode events given by a Keyboard report.
     In relative (HID) mode, the module may send keycodes corresponding to keyboard presses
-    and releases to represent the functionality of a gesture.
-    */
+    and releases to represent the functionality of a gesture. */
 void printKeycodeEvents(report_t* cur_report, report_t* prev_report, uint8_t keycodeIndex)
 {
     if(cur_report->keyboard.keycode[keycodeIndex] != prev_report->keyboard.keycode[keycodeIndex])
@@ -482,23 +480,21 @@ void printKeycodeEvents(report_t* cur_report, report_t* prev_report, uint8_t key
     Typically the module will send preliminary coordinates of "contacted" fingers 
     a couple frames before it is validated and confident. This is intended to 
     demonstrate the difference between those events. For most cases, you want to confirm 
-    that the finger is valid before using its coordinates. 
-*/
+    that the finger is valid before using its coordinates. */
 void printFingerEvents(report_t* cur_report, report_t* prev_report, uint8_t finger_num)
 {
     printContactEvents(cur_report, prev_report, finger_num);
     printFingerValidationEvents(cur_report, prev_report, finger_num);
 }
 /** Determines and prints if a finger contact event occurred between cur_report and prev_report for finger_num. 
-    Demonstrates use of the API_Gen4_isFingerContacted function. 
-    */
+    Demonstrates use of the API_C2_isFingerContacted function. */
 void printContactEvents(report_t* cur_report, report_t* prev_report, uint8_t finger_num)
 {
     //finger is contacted now
-    if(API_Gen4_isFingerContacted(cur_report, finger_num))
+    if(API_C2_isFingerContacted(cur_report, finger_num))
     {
         //it wasn't contacted before
-        if(!API_Gen4_isFingerContacted(prev_report, finger_num))
+        if(!API_C2_isFingerContacted(prev_report, finger_num))
         {
             Serial.print(F("Finger "));
             Serial.print(finger_num);
@@ -509,7 +505,7 @@ void printContactEvents(report_t* cur_report, report_t* prev_report, uint8_t fin
     else
     {
         //it was contacted before
-        if(API_Gen4_isFingerContacted(prev_report, finger_num))
+        if(API_C2_isFingerContacted(prev_report, finger_num))
         {
             Serial.print(F("Finger "));
             Serial.print(finger_num);
@@ -518,17 +514,16 @@ void printContactEvents(report_t* cur_report, report_t* prev_report, uint8_t fin
     }
 }
 /** Determines and prints if a finger validation event occurred between cur_report and prev_report for finger_num. 
-    Demonstrates use of the API_Gen4_isFingerValid function. 
+    Demonstrates use of the API_C2_isFingerValid function. 
     Note: x,y data for invalid fingers should generally be ignored. When a finger is released, its last location is 
-    still sent. This should be ignored because the finger is not valid. 
-    */
+    still sent. This should be ignored because the finger is not valid. */
 void printFingerValidationEvents(report_t* cur_report, report_t* prev_report, uint8_t finger_num)
 {
     //finger is valid now
-    if(API_Gen4_isFingerValid(cur_report, finger_num))
+    if(API_C2_isFingerValid(cur_report, finger_num))
     {
         //it wasn't valid before
-        if(!API_Gen4_isFingerValid(prev_report, finger_num))
+        if(!API_C2_isFingerValid(prev_report, finger_num))
         {
             Serial.print(F("Finger "));
             Serial.print(finger_num);
@@ -539,7 +534,7 @@ void printFingerValidationEvents(report_t* cur_report, report_t* prev_report, ui
     else
     {
         // it was valid before
-        if(API_Gen4_isFingerValid(prev_report, finger_num))
+        if(API_C2_isFingerValid(prev_report, finger_num))
         {
             Serial.print(F("Finger "));
             Serial.print(finger_num);
@@ -550,7 +545,7 @@ void printFingerValidationEvents(report_t* cur_report, report_t* prev_report, ui
 
 /** Returns the button information in the passed in report. 
     returns 0 if NULL or report is a keyboard report that does not
-    have button data.*/
+    have button data. */
 uint8_t getButtonsFromReport(report_t* report)
 {
     if(report == NULL)
@@ -569,8 +564,7 @@ uint8_t getButtonsFromReport(report_t* report)
 }
 
 /** Determines and prints if a button event (press or release) occurred between cur_report and prev_report. 
-    Demonstrates use of the API_Gen4_isButtonPressed function.
-    */
+    Demonstrates use of the API_C2_isButtonPressed function. */
 void printButtonEvents(report_t* cur_report, report_t* prev_report)
 {
     uint8_t currentButtons = getButtonsFromReport(cur_report);
@@ -585,7 +579,7 @@ void printButtonEvents(report_t* cur_report, report_t* prev_report)
         {
             Serial.print(F("Button "));
             Serial.print(i);
-            if(API_Gen4_isButtonPressed(cur_report, mask))
+            if(API_C2_isButtonPressed(cur_report, mask))
             {
                 Serial.println(F(" Pressed"));
             }
