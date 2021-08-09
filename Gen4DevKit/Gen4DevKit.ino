@@ -1,11 +1,9 @@
 // Copyright (c) 2018 Cirque Corp. Restrictions apply. See: www.cirque.com/sw-license
 
-// In order to get this to build, you have to run the moveFiles.bat (located in this directory) once before compile time. 
-// This batch file copies the necessary includes from their source directories to this directory to satisfy Arduino's compiler (all files need to be in this directory). 
-// If your local directory structure doesn't match the branch, the relative paths won't evaluate properly.
+// This demo code shows how to control a Gen4 touchpad and how to read XY packet information from the touchpad.
+// This code is built to run on the 02-000658 board with a Teensy 3.2
 
 #include "API_C2.h"         /** < Provides API calls to interact with API_C2 firmware */
-//#include "Demo_02_000658.h" /** < Provides Functions to connect to the 02_000568 dev board */
 #include "API_Hardware.h"
 #include "API_HostBus.h"    /** < Provides I2C connection to module */
 
@@ -22,7 +20,7 @@ void setup()
   API_Hardware_PowerOn();    //Power up the board
   delay(2);                  //delay for power up
   
-  // initialize i2c connection at 400khz 
+  // initialize i2c connection at 400kHz 
   API_C2_init(400000, CIRQUE_SLAVE_ADDR); 
   
   delay(50);                 //delay before reading registers after startup
@@ -36,7 +34,7 @@ void setup()
 }
 
 /** The main structure of the loop is: 
-    Wait for the Data Ready line to assert. When it does, read the data (which clears DR) and analyze the data.
+    Wait for the Data Ready (DR) line to assert. When it does, read the data (which clears DR) and process the data.
     The rest is just a user interface to change various settings.
     */
 void loop()
